@@ -1,0 +1,13 @@
+This archive contains Windows binaries of fftw-3.0.1, compiled using
+the Intel compiler, icc-7.1 /O3 /G7.  
+
+These files were contributed by Alessio Massaro.
+
+See http://www.fftw.org for the FFTW source code and documentation.
+
+This is file fftw-3.0.1-w32-pl1.zip (patch level 1).  
+
+If you downloaded file fftw-3.0.1-w32.zip, please upgrade to
+fftw-3.0.1-w32-pl1.zip.  In fftw-3.0.1-w32.zip, fftw*_execute_dft_c2r
+are missing in the Win32 binaries export symbol table.  The new
+archive fixes this problem.
