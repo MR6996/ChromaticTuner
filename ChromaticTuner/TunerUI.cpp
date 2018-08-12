@@ -9,10 +9,11 @@ TunerUI::TunerUI() :
 	mA4Freq(440),
 	mPointerValue(50.0),
 	mLastPointerValue(50.0),
-	mNote((int)Tuner::Freq2key(mA4Freq)-40),
+	mNote((int)Tuner::Freq2key(mA4Freq) - 40),
 	mOctave(4),
 	mBaseGraph(0),
 	mLastSample(GRAPH_BUFF_SIZE + 1),
+	mTableOffset(0),
 	mHwnd(NULL), 
 	mHDlgAbout(NULL),
 	mHDlgPreferences(NULL), 
@@ -284,22 +285,22 @@ void TunerUI::DrawTextContents(D2D1_SIZE_F rtSize) {
 		m_pGrayWhiteBrush);
 
 	m_pRenderTarget->DrawText(
-		NOTE_TABLE[mNote],
-		ARRAYSIZE(NOTE_TABLE[mNote]) - 1,
+		NOTE_TABLE[mNote + mTableOffset],
+		ARRAYSIZE(NOTE_TABLE[mNote + mTableOffset]) - 1,
 		m_pNoteTextFormat,
 		noteRect,
 		m_pGrayWhiteBrush);
 
 	m_pRenderTarget->DrawText(
-		NOTE_TABLE[(mNote + 11) % 12],
-		ARRAYSIZE(NOTE_TABLE[(mNote + 11) % 12]) - 1,
+		NOTE_TABLE[(mNote + 11) % 12 + mTableOffset],
+		ARRAYSIZE(NOTE_TABLE[(mNote + 11) % 12 + mTableOffset]) - 1,
 		m_pBoundNoteTextFormat,
 		lb_noteRect,
 		m_pLightGrayBrush);
 
 	m_pRenderTarget->DrawText(
-		NOTE_TABLE[(mNote + 1) % 12],
-		ARRAYSIZE(NOTE_TABLE[(mNote + 1) % 12]) - 1,
+		NOTE_TABLE[(mNote + 1) % 12 + mTableOffset],
+		ARRAYSIZE(NOTE_TABLE[(mNote + 1) % 12 + mTableOffset]) - 1,
 		m_pBoundNoteTextFormat,
 		rb_noteRect,
 		m_pLightGrayBrush);
@@ -642,6 +643,11 @@ INT_PTR TunerUI::PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 			SendMessage(micCombo, CB_ADDSTRING, 0, (LPARAM)device->name);
 		SendMessage(micCombo, CB_SETCURSEL, (WPARAM)pTunerUI->mTuner.GetDeviceIndex(), 0);
 
+		if(pTunerUI->mTableOffset == 0)
+			CheckRadioButton(hDlg, IDC_SHARP_RADIO, IDC_FLAT_RADIO, IDC_SHARP_RADIO);
+		else
+			CheckRadioButton(hDlg, IDC_SHARP_RADIO, IDC_FLAT_RADIO, IDC_FLAT_RADIO);
+
 		return TRUE;
 	}
 	case WM_COMMAND:
@@ -664,6 +670,12 @@ INT_PTR TunerUI::PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 			HWND micCombo = GetDlgItem(hDlg, IDC_MIC_COMBO);
 			int deviceIndex = SendMessage(micCombo, CB_GETCURSEL, 0, 0);
 			pTunerUI->mTuner.ChangeInputDevice(deviceIndex);
+
+			HWND sharpRadio = GetDlgItem(hDlg, IDC_SHARP_RADIO);
+			if (SendMessage(sharpRadio, BM_GETCHECK, 0, 0))
+				pTunerUI->mTableOffset = 0;
+			else
+				pTunerUI->mTableOffset = 12;
 
 			DestroyWindow(hDlg);
 			pTunerUI->mHDlgPreferences = NULL;

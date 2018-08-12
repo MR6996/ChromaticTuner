@@ -141,6 +141,7 @@ private:
 	int						mLastSample;
 	WCHAR					mOctaveText[11];
 	WCHAR					mFreqText[25];
+	int						mTableOffset;
 
 	HWND					mHwnd;
 	HWND					mHDlgAbout;
