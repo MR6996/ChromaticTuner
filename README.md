@@ -1,5 +1,5 @@
 # Chromatic-Tuner
-<img align="center" src="chtuner_logo.png">
+<img align="center" src="_media/chtuner_logo.png">
 
 An application for detects and displays the pitch of musical notes played on a musical instrument.
 
