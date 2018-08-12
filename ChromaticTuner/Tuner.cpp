@@ -74,6 +74,42 @@ void Tuner::EndTune() {
 	*/
 }
 
+void Tuner::ChangeInputDevice(PaDeviceIndex index) {
+	
+	mErr = Pa_StopStream(m_pStream);
+	/**
+	Error handling
+	*/
+
+	mInputParameters.device = index;
+	/**
+	Error handling
+	*/
+
+	mInputParameters.channelCount = mNChannels;
+	mInputParameters.suggestedLatency = Pa_GetDeviceInfo(mInputParameters.device)->defaultLowInputLatency;
+
+	mErr = Pa_OpenStream(
+		&m_pStream,
+		&mInputParameters,
+		NULL,
+		mFs,
+		mFramePerBuffer,
+		paClipOff,
+		RecordCallback,
+		this
+	);
+
+	mErr = Pa_StartStream(m_pStream);
+	/**
+	Error handling
+	*/
+}
+
+PaDeviceIndex Tuner::GetDeviceIndex() {
+	return mInputParameters.device;
+}
+
 double Tuner::GetMaxFreq() {
 	double freqValue;
 
@@ -95,14 +131,29 @@ float Tuner::GetSample(int i) {
 	return sampleValue;
 }
 
-double Tuner::freq2key(double freq, double freq_ref) {
-	if (freq > 26.30)
-		return 12.0 * log2(freq / freq_ref) + 49.0;
-	else
-		return 0.0;
+std::vector<const PaDeviceInfo*> Tuner::EnumerateAudioInputDevice() {
+	std::vector<const PaDeviceInfo*> devices;
+	int n = Pa_GetDeviceCount();
+		
+	if ( n > 0)
+		for (int i = 0; i < n; i++) {
+			const PaDeviceInfo* device = Pa_GetDeviceInfo(i);
+			//if (i == Pa_GetHostApiInfo(device->hostApi)->defaultInputDevice)
+				devices.push_back(device);
+		}
+	return devices;
 }
 
-double Tuner::key2freq(int key, double freq_ref) {
+
+double Tuner::Freq2key(double freq, double freq_ref) {
+	if (freq > 26.30)
+		return 12.0 * log2(freq / freq_ref) + 49.0;
+	
+	return 0.0;
+}
+
+double Tuner::Key2freq(int key, double freq_ref) {
+	if (key < 0) return 0.0;
 	return freq_ref * pow(2, (key - 49) / 12.0);
 }
 

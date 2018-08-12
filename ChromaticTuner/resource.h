@@ -12,23 +12,24 @@
 #define IDD_PREF_DIALOG                 107
 #define IDC_PREF_CANCEL                 1026
 #define IDC_PREF_OK                     1027
-#define IDC_FREQ_EDIT                   1029
-#define IDC_PREF_RESET                  1031
-#define IDC_FREQ_SLIDER                 1034
-#define IDC_STATIC_TEXT					1035
+#define IDC_FREQ_EDIT                   1028
+#define IDC_PREF_RESET                  1029
+#define IDC_FREQ_SLIDER                 1030
+#define IDC_STATIC_TEXT                 1031
+#define IDC_MIC_COMBO                   1032
+#define IDC_SHARP_RADIO                 1033
+#define IDC_FLAT_RADIO                  1034
 #define ID_FILE_EXIT                    40001
-#define ID_SETTINGS_MICROFONE           40002
-#define ID_SETTINGS_PREFERENCES         40003
-#define ID__ABOUT                       40004
-#define ID_MICROPHONE_NONE              40006
+#define ID__ABOUT                       40003
+#define ID_FILE_PREFERENCES             40004
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        108
-#define _APS_NEXT_COMMAND_VALUE         40007
-#define _APS_NEXT_CONTROL_VALUE         1036
+#define _APS_NEXT_COMMAND_VALUE         40005
+#define _APS_NEXT_CONTROL_VALUE         1035
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

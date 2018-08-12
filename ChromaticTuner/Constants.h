@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 /**
  *	GENERAL
@@ -19,6 +19,7 @@
 
 #define BAR_STEPS			(30)
 
+#define MIC_THRESHOLD		(BAR_STEPS*0.05f)
 #define SMOOTHING_FACTOR	(0.125f)
 
  /**
@@ -32,4 +33,5 @@
 #define FRAMES_PER_BUFFER	(N_FRAMES)
 	
 const char UI_CLASS_NAME[] = "tuner_app_wc";
-const WCHAR NOTE_TABLE[12][3] = { L"C", L"C#", L"D", L"D#", L"E", L"F", L"F#", L"G", L"G#", L"A", L"A#", L"B" };
+const WCHAR NOTE_TABLE[24][3] = { L"C", L"C#", L"D", L"D#", L"E", L"F", L"F#", L"G", L"G#", L"A", L"A#", L"B",
+								  L"C", L"D♭", L"D", L"E♭", L"E", L"F", L"G♭", L"G", L"A♭", L"A", L"B♭", L"B" };

@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include "SoundAnalizer.h"
 #include "portaudio/portaudio.h"
+#include <vector>
 
 typedef float SAMPLE;
 
@@ -34,6 +35,16 @@ public:
 	/**
 	 *
 	 * */
+	void ChangeInputDevice(PaDeviceIndex index);
+
+	/**
+	 *
+	 * */
+	PaDeviceIndex GetDeviceIndex();
+
+	/**
+	 *
+	 * */
 	double GetMaxFreq();
 
 	/*
@@ -44,12 +55,18 @@ public:
 	/**
 	 *
 	 * */
-	static double freq2key(double freq, double freq_ref = 440.0);
+	std::vector<const PaDeviceInfo*> EnumerateAudioInputDevice();
 
 	/**
 	 *
 	 * */
-	static double key2freq(int key, double freq_ref = 440.0);
+	static double Freq2key(double freq, double freq_ref = 440.0);
+
+	/**
+	 *
+	 * */
+	static double Key2freq(int key, double freq_ref = 440.0);
+
 
 private:
 

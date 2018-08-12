@@ -104,9 +104,6 @@ private:
 	//	
 	void UpdateValues();
 	
-	//
-	static void CloseDialogBox(HWND hDlg, int type);
-
 	// The windows procedure.
 	static LRESULT CALLBACK WndProc(
 		HWND hWnd,
@@ -135,12 +132,15 @@ private:
 	Tuner					mTuner;
 	int						mA4Freq;
 	float					mGraphBuffer[GRAPH_BUFF_SIZE + 1];
+	float					mThreshold;
 	float					mPointerValue;
 	float					mLastPointerValue;
 	int						mNote;
+	int						mOctave;
 	int						mBaseGraph;
 	int						mLastSample;
-	WCHAR					mFreqText[45];
+	WCHAR					mOctaveText[11];
+	WCHAR					mFreqText[25];
 
 	HWND					mHwnd;
 	HWND					mHDlgAbout;
@@ -158,7 +158,7 @@ private:
 	ID2D1SolidColorBrush*	m_pBarBrushs[BAR_STEPS];
 
 	IDWriteFactory*			m_pWriteFactory;
-	IDWriteTextFormat*		m_pFreqTextFormat;
+	IDWriteTextFormat*		m_pNormalTextFormat;
 	IDWriteTextFormat*		m_pNoteTextFormat;
 	IDWriteTextFormat*		m_pBoundNoteTextFormat;
 };

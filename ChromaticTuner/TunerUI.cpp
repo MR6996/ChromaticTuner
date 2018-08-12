@@ -1,5 +1,6 @@
 #include "TunerUI.h"
 #include <Commctrl.h>
+#include <vector>
 
 
 
@@ -8,10 +9,10 @@ TunerUI::TunerUI() :
 	mA4Freq(440),
 	mPointerValue(50.0),
 	mLastPointerValue(50.0),
-	mNote((int)Tuner::freq2key(mA4Freq)),
+	mNote((int)Tuner::Freq2key(mA4Freq)-40),
+	mOctave(4),
 	mBaseGraph(0),
 	mLastSample(GRAPH_BUFF_SIZE + 1),
-	mFreqText(L""),
 	mHwnd(NULL), 
 	mHDlgAbout(NULL),
 	mHDlgPreferences(NULL), 
@@ -19,6 +20,8 @@ TunerUI::TunerUI() :
 	m_pWriteFactory(NULL),
 	m_pRenderTarget(NULL) {
 
+	swprintf_s(mFreqText, L"F = %.2f Hz", (double)mA4Freq);
+	swprintf_s(mOctaveText, L"Octave = %d", mOctave);
 	ZeroMemory(mGraphBuffer, GRAPH_BUFF_SIZE);
 }
 
@@ -37,7 +40,7 @@ TunerUI::~TunerUI() {
 		SafeRelease(&m_pBarBrushs[i]);
 
 	SafeRelease(&m_pWriteFactory);
-	SafeRelease(&m_pFreqTextFormat);
+	SafeRelease(&m_pNormalTextFormat);
 	SafeRelease(&m_pNoteTextFormat);
 	SafeRelease(&m_pBoundNoteTextFormat);
 }
@@ -185,7 +188,7 @@ HRESULT TunerUI::CreateDeviceResources() {
 				DWRITE_FONT_STRETCH_NORMAL,
 				18,
 				L"", //locale
-				&m_pFreqTextFormat);
+				&m_pNormalTextFormat);
 
 
 		if (SUCCEEDED(hResult))
@@ -233,7 +236,7 @@ void TunerUI::DiscardDeviceResources() {
 	for (int i = 0; i < BAR_STEPS; i++)
 		SafeRelease(&m_pBarBrushs[i]);
 
-	SafeRelease(&m_pFreqTextFormat);
+	SafeRelease(&m_pNormalTextFormat);
 	SafeRelease(&m_pNoteTextFormat);
 	SafeRelease(&m_pBoundNoteTextFormat);
 }
@@ -241,6 +244,12 @@ void TunerUI::DiscardDeviceResources() {
 void TunerUI::DrawTextContents(D2D1_SIZE_F rtSize) {
 
 	const D2D1_RECT_F freqRect = D2D1::RectF(18.f, 18.f, 248.f, 30.f);
+
+	const D2D1_RECT_F octaveRect = D2D1::RectF(
+		rtSize.width - 18.f, 
+		18.f, 
+		rtSize.width - 108.f, 
+		30.f);
 
 	const D2D1_RECT_F noteRect = D2D1::RectF(
 		rtSize.width / 2.f - 50,
@@ -263,8 +272,15 @@ void TunerUI::DrawTextContents(D2D1_SIZE_F rtSize) {
 	m_pRenderTarget->DrawText(
 		mFreqText,
 		ARRAYSIZE(mFreqText) - 1,
-		m_pFreqTextFormat,
+		m_pNormalTextFormat,
 		freqRect,
+		m_pGrayWhiteBrush);
+
+	m_pRenderTarget->DrawText(
+		mOctaveText,
+		ARRAYSIZE(mOctaveText) - 1,
+		m_pNormalTextFormat,
+		octaveRect,
 		m_pGrayWhiteBrush);
 
 	m_pRenderTarget->DrawText(
@@ -349,7 +365,7 @@ void TunerUI::DrawGraph(D2D1_SIZE_F rtSize) {
 	//Draw the graph of wave recorded
 	for (int i = mBaseGraph; i < mBaseGraph + GRAPH_BUFF_SIZE + 1; i++) {
 		x += dx;
-		y = (mGraphBuffer[i % (GRAPH_BUFF_SIZE + 1)])* y_scale;
+		y = (mGraphBuffer[i % (GRAPH_BUFF_SIZE + 1)] + 0.001f)* y_scale;
 		m_pRenderTarget->DrawLine(
 			D2D1::Point2F(x, y_0 + y),
 			D2D1::Point2F(x, y_0 - y),
@@ -360,34 +376,28 @@ void TunerUI::DrawGraph(D2D1_SIZE_F rtSize) {
 }
 
 void TunerUI::DrawBar(D2D1_SIZE_F rtSize) {
-	float threshold = 0, tmpThreshold;
-	threshold = mGraphBuffer[(mLastSample + GRAPH_BUFF_SIZE) % (GRAPH_BUFF_SIZE + 1)] / MAX_AMPLITUDE * BAR_STEPS;
-	for (int i = 1; i < SAMPLE_PER_REFRESH; i++) {
-		tmpThreshold = mGraphBuffer[(mLastSample + GRAPH_BUFF_SIZE - i) % (GRAPH_BUFF_SIZE + 1)] / MAX_AMPLITUDE * BAR_STEPS;
-		if (tmpThreshold > threshold) threshold = tmpThreshold;
-	}
 	float bar_step_lenght = (rtSize.height - 17.f - rtSize.height * 0.6f - 11.f) / (float)BAR_STEPS;
 
 	//Draw the bar
 	for (int i = 1; i <= BAR_STEPS; i++) {
-		if (i <= threshold) {
+		if (i <= mThreshold) {
 			m_pRenderTarget->FillRectangle(D2D1::RectF(
-				rtSize.width * 0.2f / 2.f - 26.f, rtSize.height - 17.f - (bar_step_lenght)*(i - 1) - 1.5f,
-				rtSize.width * 0.2f / 2.f - 2.f, rtSize.height - 17.f - (bar_step_lenght)*(i)
+				rtSize.width * 0.2f / 2.f - 23.f, rtSize.height - 17.f - (bar_step_lenght)*(i - 1) - 1.5f,
+				rtSize.width * 0.2f / 2.f + 1.f, rtSize.height - 17.f - (bar_step_lenght)*(i)
 			), m_pBarBrushs[i - 1]);
 			m_pRenderTarget->FillRectangle(D2D1::RectF(
-				rtSize.width * 0.2f / 2.f + 2.f, rtSize.height - 17.f - (bar_step_lenght)*(i - 1) - 1.5f,
-				rtSize.width * 0.2f / 2.f + 26.f, rtSize.height - 17.f - (bar_step_lenght)*(i)
+				rtSize.width * 0.2f / 2.f + 5.f, rtSize.height - 17.f - (bar_step_lenght)*(i - 1) - 1.5f,
+				rtSize.width * 0.2f / 2.f + 29.f, rtSize.height - 17.f - (bar_step_lenght)*(i)
 			), m_pBarBrushs[i - 1]);
 		}
 		else {
 			m_pRenderTarget->FillRectangle(D2D1::RectF(
-				rtSize.width * 0.2f / 2.f - 26.f, rtSize.height - 17.f - (bar_step_lenght)*(i - 1) - 1.5f,
-				rtSize.width * 0.2f / 2.f - 2.f, rtSize.height - 17.f - (bar_step_lenght)*(i)
+				rtSize.width * 0.2f / 2.f - 23.f, rtSize.height - 17.f - (bar_step_lenght)*(i - 1) - 1.5f,
+				rtSize.width * 0.2f / 2.f + 1.f, rtSize.height - 17.f - (bar_step_lenght)*(i)
 			), m_pDarkGrayBrush);
 			m_pRenderTarget->FillRectangle(D2D1::RectF(
-				rtSize.width * 0.2f / 2.f + 2.f, rtSize.height - 17.f - (bar_step_lenght)*(i - 1) - 1.5f,
-				rtSize.width * 0.2f / 2.f + 26.f, rtSize.height - 17.f - (bar_step_lenght)*(i)
+				rtSize.width * 0.2f / 2.f + 5.f, rtSize.height - 17.f - (bar_step_lenght)*(i - 1) - 1.5f,
+				rtSize.width * 0.2f / 2.f + 29.f, rtSize.height - 17.f - (bar_step_lenght)*(i)
 			), m_pDarkGrayBrush);
 		}
 	}
@@ -472,40 +482,31 @@ void TunerUI::OnResize(UINT width, UINT height) {
 }
 
 void TunerUI::UpdateValues() {
-	double f = mTuner.GetMaxFreq(),
-		   key = Tuner::freq2key(f, mA4Freq);
-	int key_int = (int)rint(key), octave = (key_int + 8) / 12;
-
-	mNote = (key_int + 8) - octave * 12;
-	mPointerValue = (float)(100.0 * (key - key_int + 0.5));
-	mPointerValue = mLastPointerValue + (mPointerValue - mLastPointerValue)*SMOOTHING_FACTOR;
-	mLastPointerValue = mPointerValue;
-
-	swprintf_s(mFreqText, L"F = %.2f Hz - p: %.2f", f, key);
-
-
 	mBaseGraph = (mBaseGraph + SAMPLE_PER_REFRESH) % (2 * GRAPH_BUFF_SIZE + 1);
 	for (int i = 0, j = 0; i < SAMPLE_PER_REFRESH; i++, j += N_FRAMES / SAMPLE_PER_REFRESH)
 		mGraphBuffer[(mLastSample + i) % (GRAPH_BUFF_SIZE + 1)] = mTuner.GetSample(j);
 	mLastSample = (mLastSample + SAMPLE_PER_REFRESH) % (2 * GRAPH_BUFF_SIZE + 1);
-}
+	
+	float tmpThreshold;
+	mThreshold = 0.f;
+	for (int i = 0; i < SAMPLE_PER_REFRESH; i++) {
+		tmpThreshold = mGraphBuffer[(mLastSample + GRAPH_BUFF_SIZE - i) % (GRAPH_BUFF_SIZE + 1)] / MAX_AMPLITUDE * BAR_STEPS;
+		if (tmpThreshold > mThreshold) mThreshold = tmpThreshold;
+	}
 
-
-
-void TunerUI::CloseDialogBox(HWND hDlg, int type) {
-	TunerUI * pTunerUI = reinterpret_cast<TunerUI*>(
-		static_cast<LONG_PTR>(GetWindowLongPtrW(GetParent(hDlg), GWLP_USERDATA))
-		);
-
-	switch (type) {
-	case IDD_ABOUT_DIALOG:
-		DestroyWindow(hDlg);
-		pTunerUI->mHDlgPreferences = NULL;
-		break;
-	case IDD_PREF_DIALOG:
-		DestroyWindow(hDlg);
-		pTunerUI->mHDlgPreferences = NULL;
-		break;
+	if (mThreshold > MIC_THRESHOLD) {
+		double f = mTuner.GetMaxFreq(),
+			   key = Tuner::Freq2key(f, mA4Freq);
+		int key_int = (int)rint(key);
+		
+		mOctave = (key_int + 8) / 12;
+		mNote = key_int + 8 - mOctave * 12;
+		mPointerValue = (float)(100.0 * (key - key_int + 0.5));
+		mPointerValue = mLastPointerValue + (mPointerValue - mLastPointerValue)*SMOOTHING_FACTOR;
+		mLastPointerValue = mPointerValue;
+	
+		swprintf_s(mFreqText, L"F = %.2f Hz", f);
+		swprintf_s(mOctaveText, L"Octave = %d", mOctave);
 	}
 }
 
@@ -523,14 +524,6 @@ LRESULT TunerUI::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		if (!SetTimer(hWnd, REFRESH_TIMER_ID, REFRESH_PERIOD, NULL))
 			MessageBox(hWnd, "Could not set timer!", "Error", MB_OK | MB_ICONEXCLAMATION);
 
-		HMENU settingsMenu = GetSubMenu(GetMenu(hWnd), 1);
-		HMENU micMenu = CreatePopupMenu();
-		AppendMenuW(settingsMenu, MF_POPUP, (UINT)micMenu, L"Microphones");
-
-		for(int i = 0; i < 4; i++)
-			AppendMenuW(micMenu, MF_STRING, ID__ABOUT, L"ciao");
-
-		CheckMenuRadioItem(micMenu, ID__ABOUT, ID__ABOUT, ID__ABOUT, MF_BYCOMMAND);
 		result = TRUE;
 	}
 	else {
@@ -573,7 +566,7 @@ LRESULT TunerUI::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 						TunerUI::AboutDlgProc
 					);
 					break;
-				case ID_SETTINGS_PREFERENCES:
+				case ID_FILE_PREFERENCES:
 					pTunerUI->mHDlgPreferences = CreateDialogParam(
 						GetModuleHandle(NULL),
 						MAKEINTRESOURCE(IDD_PREF_DIALOG),
@@ -610,7 +603,12 @@ INT_PTR TunerUI::AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
 		case IDC_ABOUT_OK:
-			TunerUI::CloseDialogBox(hDlg, IDD_ABOUT_DIALOG);
+			TunerUI * pTunerUI = reinterpret_cast<TunerUI*>(
+				static_cast<LONG_PTR>(GetWindowLongPtrW(GetParent(hDlg), GWLP_USERDATA))
+				);
+
+			DestroyWindow(hDlg);
+			pTunerUI->mHDlgPreferences = NULL;
 			return TRUE;
 		}
 	
@@ -620,6 +618,10 @@ INT_PTR TunerUI::AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 }
 
 INT_PTR TunerUI::PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
+
+	TunerUI * pTunerUI = reinterpret_cast<TunerUI*>(
+		static_cast<LONG_PTR>(GetWindowLongPtrW(GetParent(hDlg), GWLP_USERDATA))
+		);
 
 	switch (message) {
 	case WM_INITDIALOG: 
@@ -634,26 +636,34 @@ INT_PTR TunerUI::PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 		SendMessage(freqEdit, EM_SETLIMITTEXT, (WPARAM)3, 0);
 		char buffer[4]; sprintf_s(buffer, "%d", a4freq);
 		SetWindowText(freqEdit, buffer);
+
+		HWND micCombo = GetDlgItem(hDlg, IDC_MIC_COMBO);
+		for(const PaDeviceInfo* device : pTunerUI->mTuner.EnumerateAudioInputDevice())
+			SendMessage(micCombo, CB_ADDSTRING, 0, (LPARAM)device->name);
+		SendMessage(micCombo, CB_SETCURSEL, (WPARAM)pTunerUI->mTuner.GetDeviceIndex(), 0);
+
 		return TRUE;
 	}
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
 		case IDC_PREF_CANCEL:
-			TunerUI::CloseDialogBox(hDlg, IDD_PREF_DIALOG);
+			DestroyWindow(hDlg);
+			pTunerUI->mHDlgPreferences = NULL;
 			return TRUE;
 		case IDC_PREF_OK:
 		{
-			TunerUI * pTunerUI = reinterpret_cast<TunerUI*>(
-				static_cast<LONG_PTR>(GetWindowLongPtrW(GetParent(hDlg), GWLP_USERDATA))
-				);
 			HWND freqEdit = GetDlgItem(hDlg, IDC_FREQ_EDIT);
 			TCHAR buffer[4];
 			GetWindowText(freqEdit, buffer, 4);
 			int a4freq = atoi(buffer);
-			if(a4freq < 415 || a4freq > 445)
+			if (a4freq < 415 || a4freq > 445)
 				pTunerUI->mA4Freq = 440;
-			else 
+			else
 				pTunerUI->mA4Freq = a4freq;
+
+			HWND micCombo = GetDlgItem(hDlg, IDC_MIC_COMBO);
+			int deviceIndex = SendMessage(micCombo, CB_GETCURSEL, 0, 0);
+			pTunerUI->mTuner.ChangeInputDevice(deviceIndex);
 
 			DestroyWindow(hDlg);
 			pTunerUI->mHDlgPreferences = NULL;
@@ -679,7 +689,8 @@ INT_PTR TunerUI::PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 		return TRUE;
 	}
 	case WM_CLOSE:
-		TunerUI::CloseDialogBox(hDlg, IDD_PREF_DIALOG);
+		DestroyWindow(hDlg);
+		pTunerUI->mHDlgPreferences = NULL;
 		return TRUE;
 	}
 
