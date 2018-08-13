@@ -9,6 +9,7 @@ TunerUI::TunerUI() :
 	mA4Freq(440),
 	mPointerValue(50.0),
 	mLastPointerValue(50.0),
+	mThreshold(0.0),
 	mNote((int)Tuner::Freq2key(mA4Freq) - 40),
 	mOctave(4),
 	mBaseGraph(0),

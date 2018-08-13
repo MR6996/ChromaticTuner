@@ -154,7 +154,7 @@ double Tuner::Freq2key(double freq, double freq_ref) {
 
 double Tuner::Key2freq(int key, double freq_ref) {
 	if (key < 0) return 0.0;
-	return freq_ref * pow(2, (key - 49) / 12.0);
+	return freq_ref * pow(2, ((double)key - 49) / 12.0);
 }
 
 
@@ -179,7 +179,7 @@ int Tuner::RecordCallback(const void * inputBuffer, void * outputBuffer, unsigne
     else {
 		if (tuner->mNChannels == 2) {
 			for (long i = 0; i < tuner->mFramePerBuffer; i++) {
-				tuner->m_pAudioBuffer[i] = (double)((*rptr++ + *rptr++)/2.0);
+				tuner->m_pAudioBuffer[i] = ((double)(*rptr++) + (double)(*rptr++))/2.0;
 			}
 		}
 		else {
