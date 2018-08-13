@@ -7,13 +7,7 @@ An application for detects and displays the pitch of musical notes played on a m
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
-
 ## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
 
 ### Authors
 
@@ -24,3 +18,6 @@ Add additional notes about how to deploy this on a live system
 This project is licensed under the GNU GPL License - see the [LICENSE](LICENSE) file for details
 
 ## References
+[1] **P. McLeod and G. Wyvill. A smarter way to find pitch.** In Proceedings of the International Computer Music Conference (ICMC’05), 2005.
+
+Copyright © 2018 Mario Randazzo
