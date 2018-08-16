@@ -73,7 +73,7 @@ HRESULT TunerUI::Initialize() {
 		mHwnd = CreateWindowEx(
 			0,
 			UI_CLASS_NAME,
-			"Chromatic Tuner - (c) Mario Randazzo",
+			"Chromatic Tuner v.01",
 			WS_TILEDWINDOW,
 			CW_USEDEFAULT,
 			CW_USEDEFAULT,
@@ -522,6 +522,8 @@ LRESULT TunerUI::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		SetWindowLongPtrW(hWnd, GWLP_USERDATA, PtrToLong(pTunerUI));
 
 		pTunerUI->mTuner.StartTune();
+
+		SetWindowText(hWnd, "Chromatic Tuner v.01");
 
 		if (!SetTimer(hWnd, REFRESH_TIMER_ID, REFRESH_PERIOD, NULL))
 			MessageBox(hWnd, "Could not set timer!", "Error", MB_OK | MB_ICONEXCLAMATION);
