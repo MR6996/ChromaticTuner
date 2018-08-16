@@ -9,6 +9,9 @@
 typedef float SAMPLE;
 
 /**
+ *	
+ *
+ *	@author Mario Randazzo
  *
  * */
 class Tuner {
@@ -23,7 +26,7 @@ public:
 	~Tuner();
 
 	/**
-	 *
+	 *	
 	 * */
 	void StartTune();
 

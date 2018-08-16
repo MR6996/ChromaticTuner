@@ -601,6 +601,7 @@ INT_PTR TunerUI::AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 	case WM_INITDIALOG:
 		return TRUE;
 	case WM_CTLCOLORDLG:
+	case WM_CTLCOLORSTATIC:
 		return (INT_PTR)GetStockObject(WHITE_BRUSH);
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {

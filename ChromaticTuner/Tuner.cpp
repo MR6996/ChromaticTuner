@@ -138,7 +138,6 @@ std::vector<const PaDeviceInfo*> Tuner::EnumerateAudioInputDevice() {
 	if ( n > 0)
 		for (int i = 0; i < n; i++) {
 			const PaDeviceInfo* device = Pa_GetDeviceInfo(i);
-			//if (i == Pa_GetHostApiInfo(device->hostApi)->defaultInputDevice)
 				devices.push_back(device);
 		}
 	return devices;
