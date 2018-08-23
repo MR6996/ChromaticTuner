@@ -1,10 +1,11 @@
 ![Logo](_media/chtuner_logo.png)
 
-
 <img align="left" width="60%" src="_media/screen_01.png"/> 
 <img align="right" width="40%" src="_media/screen_01.png"/>
 
-The aim of the project have been the production of an application that a musician can use for tune his instruments. [Link to Header](#references)  
+The aim of the project have been the production of an application that a musician can use for tune his instruments. 
+
+This application use a Pitch Detection Algorithm (MPM algorithm [See references](#references)), for identify the pitch of a sound recorded by the microphone.  
 </br></br>
 The application provides a dialog box for set the user preferences, such as:
    * the frequency of A4;
