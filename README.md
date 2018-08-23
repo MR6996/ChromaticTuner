@@ -1,9 +1,17 @@
+<style type="text/css">
+.floated-text {
+  border: 1px solid black;
+  display: block;
+}
+</style>
+
 ![Logo](_media/chtuner_logo.png)
 
-The aim of the project have been the production of an application that a musician can use for tune his instruments.
-
-<img src="_media/screen_01.png"/>
-<img src="_media/screen_01.png"/>
+<div class="floated-text">
+  The aim of the project have been the production of an application that a musician can use for tune his instruments.
+</div>
+<img align="right" width="60%" src="_media/screen_01.png"/>
+<img align="left" width="40%" src="_media/screen_01.png"/>
 
 
 The application provides a dialog box for set the user preferences, such as:
