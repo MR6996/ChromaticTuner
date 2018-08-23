@@ -15,6 +15,8 @@ The application provides a dialog box for set the user preferences, such as:
    * the frequency of A4;
    * the input device;
    * the notation tu use for display the note.
+   
+</br></br>
 
 ## Getting Started
 
