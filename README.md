@@ -8,7 +8,9 @@ The aim of the project have been the production of an application that a musicia
 This application use a Pitch Detection Algorithm (MPM algorithm [See references](#references)), for identify the pitch of a sound recorded by the microphone. This implementation runs in real-time recording for a small delta of time and applaying the algorithm.
 
 The User-Interface show to the user the nearest note calculated starting from the pitch identified.
-</br></br>
+
+</br></br></br>
+
 The application provides a dialog box for set the user preferences, such as:
    * the frequency of A4;
    * the input device;
