@@ -3,7 +3,7 @@
 <img align="left" width="60%" src="_media/screen_01.png"/>
 <img align="right" width="40%" src="_media/screen_01.png"/>
 
-The aim of the project have been the production of an application that a musician can use for tune his instruments. 
+The aim of the project is the production of an application that a musician can use for tune his instruments. 
 
 This application use a Pitch Detection Algorithm (MPM algorithm [See references](#references)), for identify the pitch of a sound recorded by the microphone. This implementation runs in real-time recording audio signal for a small delta of time and applaying the algorithm.
 
@@ -23,6 +23,8 @@ The application provides a dialog box for set the user preferences, such as:
 ## Deployment
 
 ## Built With 
+The following libraries are used for the development of the application:
+
 * [Portaudio](www.portaudio.com) a free, cross-platform, open-source, audio I/O library;
 * [FFTW3](http://www.fftw.org/) a C subroutine library for computing the discrete Fourier transform.
 
