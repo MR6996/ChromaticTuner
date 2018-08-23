@@ -9,7 +9,9 @@
 typedef float SAMPLE;
 
 /**
- *	
+ *	The class Tuner rappresents a tuner object that use 
+ *	a SoundAnlizer for realtime pitch detection of microphone
+ *	input. 
  *
  *	@author Mario Randazzo
  *
@@ -19,7 +21,7 @@ class Tuner {
 public:
 	
 	/**
-	 *
+	 *	
 	 * */
 	Tuner(int fs, int nChannels, int framePerBuffer);
 
