@@ -1,16 +1,15 @@
-<img align="center" src="_media/chtuner_logo.png">
+![Logo](_media/chtuner_logo.png)
 
 The aim of the project have been the production of an application that a musician can use for tune his instruments.
 
-<img align="left" width="60%" src="_media/screen_01.png"> 
-<img align="right" width="40%"src="_media/screen_02.png"> </br></br>
-</br></br></br></br></br></br></br></br></br></br></br></br></br></br>
-</br></br>
+![Screen 1](_media/screen_01.png) 
+![Screen 2](_media/screen_02.png)
+
 
 The application provides a dialog box for set the user preferences, such as:
- * the frequency of A4;
- * the input device;
- * the notation tu use for display the note.</br></br>
+   * the frequency of A4;
+   * the input device;
+   * the notation tu use for display the note.</br></br>
 
 ## Getting Started
 
