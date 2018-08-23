@@ -1,20 +1,14 @@
 ![Logo](_media/chtuner_logo.png)
 
-<div style="width: 40%;"> 
-  The aim of the project have been the production of an application that a musician can use for tune his instruments. 
-</div>
-
+The aim of the project have been the production of an application that a musician can use for tune his instruments.  
 <img align="right" width="60%" src="_media/screen_01.png"/>
+
 <img align="left" width="40%" src="_media/screen_01.png"/>
 
-<div style="border:1px solid black">
-  The application provides a dialog box for set the user preferences, such as:
-  <ul>
-    <li>the frequency of A4;</li>
-    <li>the input device;</li>
-    <li>the notation tu use for display the note.</li>
-  </ul>
-</div>
+The application provides a dialog box for set the user preferences, such as:
+   * the frequency of A4;
+   * the input device;
+   * the notation tu use for display the note.
 
 ## Getting Started
 
