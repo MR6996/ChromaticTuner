@@ -1,9 +1,10 @@
 ![Logo](_media/chtuner_logo.png)
 
-The aim of the project have been the production of an application that a musician can use for tune his instruments.  
 
-<img align="left" width="60%" src="_media/screen_01.png"/>
+<img align="left" width="60%" src="_media/screen_01.png"/> </bt>
 <img align="right" width="40%" src="_media/screen_01.png"/>
+
+The aim of the project have been the production of an application that a musician can use for tune his instruments.  
 
 The application provides a dialog box for set the user preferences, such as:
    * the frequency of A4;
