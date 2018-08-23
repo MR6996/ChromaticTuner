@@ -1,13 +1,7 @@
-<style type="text/css">
-.left-floated-text {
-  border: 1px solid black;
-  display: block;
-}
-</style>
-
 ![Logo](_media/chtuner_logo.png)
 
-<div class="left-floated-text">
+<div style="
+  border: 1px solid black;">
   The aim of the project have been the production of an application that a musician can use for tune his instruments.
 </div>
 <img align="right" width="60%" src="_media/screen_01.png"/>
