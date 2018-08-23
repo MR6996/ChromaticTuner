@@ -7,7 +7,7 @@
 <img align="right" width="60%" src="_media/screen_01.png"/>
 <img align="left" width="40%" src="_media/screen_01.png"/>
 
-<div align="right;">
+<div style="border:1px solid black">
   The application provides a dialog box for set the user preferences, such as:
   <ul>
     <li>the frequency of A4;</li>
