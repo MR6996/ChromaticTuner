@@ -2,9 +2,13 @@
 
 An application for detects and displays the pitch of musical notes played on a musical instrument.
 
-<img align="left" src="_media/screen_01.png">
-<img align="left" src="_media/screen_02.png">
+<img align="left" width="60%" src="_media/screen_01.png"> 
+<img align="right" width="40%"src="_media/screen_02.png"> </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 
+The application provides a dialog box for set the user preferences, such as:
+ * the frequency of A4;
+ * the input device;
+ * the notation tu use for display the note.</br></br>
 
 ## Getting Started
 
