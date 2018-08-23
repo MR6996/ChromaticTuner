@@ -1,6 +1,6 @@
-![Logo](_media/chtuner_logo.png)
+![Logo](_media/chtuner_logo.png)</br></br></br>
 
-<img align="left" width="60%" src="_media/screen_01.png"/> 
+<img align="left" width="60%" src="_media/screen_01.png"/>
 <img align="right" width="40%" src="_media/screen_01.png"/>
 
 The aim of the project have been the production of an application that a musician can use for tune his instruments. 
