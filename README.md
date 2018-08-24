@@ -1,7 +1,7 @@
 ![Logo](_media/chtuner_logo.png)</br></br></br>
 
 <img align="left" width="60%" src="_media/screen_01.png"/>
-<img align="right" width="40%" src="_media/screen_01.png"/>
+<img align="right" width="40%" src="_media/screen_02.png"/>
 
 The aim of the project is the production of an application that a musician can use for tune his instruments. 
 
