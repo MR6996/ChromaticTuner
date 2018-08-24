@@ -1,9 +1,8 @@
 #include "Tuner.h"
 #include <cmath>
 
-Tuner::Tuner(int fs, int nChannels, int framePerBuffer) :
+Tuner::Tuner(int fs, int framePerBuffer) :
 	mFs(fs), 
-	mNChannels(nChannels),
 	mFramePerBuffer(framePerBuffer),
 	mMaxFreq(440.f) {
 
@@ -12,12 +11,15 @@ Tuner::Tuner(int fs, int nChannels, int framePerBuffer) :
 	//Initialize PortAudio data.
 	err = Pa_Initialize();
 	if (err != paNoError) throw pa_error(Pa_GetErrorText(err));
-
+	
 	mInputParameters.device = Pa_GetDefaultInputDevice();
 	if(mInputParameters.device == paNoDevice) 
 		throw pa_error("No audio input device is available!");
 
-	mInputParameters.channelCount = mNChannels;
+	mInputParameters.channelCount 
+		= mNChannels 
+		= min(2, 
+			  Pa_GetDeviceInfo(mInputParameters.device)->maxInputChannels);
 	mInputParameters.sampleFormat = paFloat32;
 	mInputParameters.suggestedLatency = Pa_GetDeviceInfo(mInputParameters.device)->defaultLowInputLatency;
 	mInputParameters.hostApiSpecificStreamInfo = NULL;
@@ -33,9 +35,7 @@ Tuner::Tuner(int fs, int nChannels, int framePerBuffer) :
 		this
 	);
 	if (err != paNoError) throw pa_error(Pa_GetErrorText(err));
-
-
-
+	
 	// Allocate audio buffer and sound analizer.
 	m_pAudioBuffer = new double[mFramePerBuffer];
 	mAnalizer = new SoundAnalizer(m_pAudioBuffer, mFramePerBuffer, fs);
@@ -69,7 +69,7 @@ void Tuner::EndTune() {
 
 void Tuner::ChangeInputDevice(PaDeviceIndex index) {
 	if(index < 0 || index > Pa_GetDeviceCount()-1)
-		throw pa_error("Invalid audio input device index.");
+		throw std::invalid_argument("Invalid audio input device index.");
 
 	PaError err = Pa_StopStream(m_pStream);
 	if (err != paNoError) throw pa_error(Pa_GetErrorText(err));
@@ -79,7 +79,7 @@ void Tuner::ChangeInputDevice(PaDeviceIndex index) {
 	mInputParameters.channelCount = mNChannels;
 	mInputParameters.suggestedLatency = Pa_GetDeviceInfo(mInputParameters.device)->defaultLowInputLatency;
 
-	PaError err = Pa_OpenStream(
+	err = Pa_OpenStream(
 		&m_pStream,
 		&mInputParameters,
 		NULL,
@@ -90,7 +90,7 @@ void Tuner::ChangeInputDevice(PaDeviceIndex index) {
 		this
 	);
 
-	PaError err = Pa_StartStream(m_pStream);
+	err = Pa_StartStream(m_pStream);
 	if (err != paNoError) throw pa_error(Pa_GetErrorText(err));
 }
 

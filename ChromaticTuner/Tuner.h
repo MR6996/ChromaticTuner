@@ -33,7 +33,7 @@ public:
 	 *	@param framePerBuffer - the number of frames recorded. 
 	 *
 	 * */
-	Tuner(int fs, int nChannels, int framePerBuffer);
+	Tuner(int fs, int framePerBuffer);
 
 	~Tuner();
 
@@ -151,10 +151,16 @@ private:
  * */
 class pa_error : std::exception {
 
-public:
-	pa_error (const char *m) {}
 
-	const char* what() {
-		return "asd";
+public:
+	pa_error(const char *m) {
+		message = m;
 	}
+
+	const char* getErrMessage() {
+		return message;
+	}
+
+private:
+	const char* message;
 };

@@ -5,7 +5,7 @@
 
 
 TunerUI::TunerUI() :
-	mTuner(FS, N_CHANNELS, FRAMES_PER_BUFFER),
+	mTuner(FS, FRAMES_PER_BUFFER),
 	mA4Freq(440),
 	mPointerValue(50.0),
 	mLastPointerValue(50.0),
@@ -90,6 +90,8 @@ HRESULT TunerUI::Initialize() {
 			UpdateWindow(mHwnd);
 		}
 	}
+	else 
+		MessageBox(mHwnd, "Can't initialize device resources!", "Directx2D Error", MB_OK | MB_ICONEXCLAMATION);
 
 	return hResult;
 }
@@ -513,7 +515,6 @@ void TunerUI::UpdateValues() {
 }
 
 LRESULT TunerUI::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-	LRESULT result = FALSE;
 
 	if (message == WM_NCCREATE) {
 
@@ -521,14 +522,22 @@ LRESULT TunerUI::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		TunerUI *pTunerUI = (TunerUI*)pcs->lpCreateParams;
 		SetWindowLongPtrW(hWnd, GWLP_USERDATA, PtrToLong(pTunerUI));
 
-		pTunerUI->mTuner.StartTune();
+		try {
+			pTunerUI->mTuner.StartTune();
+		}
+		catch (pa_error ex) { 
+			MessageBox(hWnd, ex.getErrMessage(), "Audio input device error", MB_OK | MB_ICONEXCLAMATION);
+			return FALSE;
+		}
 
 		SetWindowText(hWnd, "Chromatic Tuner v.01");
 
-		if (!SetTimer(hWnd, REFRESH_TIMER_ID, REFRESH_PERIOD, NULL))
+		if (!SetTimer(hWnd, REFRESH_TIMER_ID, REFRESH_PERIOD, NULL)) {
 			MessageBox(hWnd, "Could not set timer!", "Error", MB_OK | MB_ICONEXCLAMATION);
-
-		result = TRUE;
+			return FALSE;
+		}
+		
+		return TRUE;
 	}
 	else {
 		TunerUI *pTunerUI = reinterpret_cast<TunerUI*>(static_cast<LONG_PTR>(GetWindowLongPtrW(hWnd, GWLP_USERDATA)));
@@ -541,22 +550,22 @@ LRESULT TunerUI::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 				UINT height = HIWORD(lParam);
 				pTunerUI->OnResize(width, height);
 			}
-			result = TRUE;
-			break;
+			return TRUE;
+
 			case WM_DISPLAYCHANGE:
 				InvalidateRect(hWnd, NULL, FALSE);
-				result = TRUE;
-				break;
+				return TRUE;
+
 			case WM_TIMER:
 				pTunerUI->UpdateValues();
 				PostMessage(hWnd, WM_PAINT, 0, 0);
-				result = TRUE;
-				break;
+				return TRUE;
+
 			case WM_PAINT:
 				pTunerUI->OnRender();
 				ValidateRect(hWnd, NULL);
-				result =  TRUE;
-				break;
+				return TRUE;
+
 			case WM_COMMAND:
 				switch (LOWORD(wParam)) {
 				case ID_FILE_EXIT:
@@ -580,21 +589,21 @@ LRESULT TunerUI::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 					);
 					break;
 				}
-				result = TRUE;
-				break;
+				return TRUE;
+
 			case WM_DESTROY:
 				PostQuitMessage(0);
 				KillTimer(hWnd, REFRESH_TIMER_ID);
 				pTunerUI->mTuner.EndTune();
-				result = TRUE;
-				break;
+				return TRUE;
+
 			default:
-				result = DefWindowProc(hWnd, message, wParam, lParam);
+				return DefWindowProc(hWnd, message, wParam, lParam);
 			}
 		}
 	}
 
-	return result;
+	return TRUE;
 }
 
 INT_PTR TunerUI::AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -662,28 +671,33 @@ INT_PTR TunerUI::PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 			return TRUE;
 		case IDC_PREF_OK:
 		{
-			HWND freqEdit = GetDlgItem(hDlg, IDC_FREQ_EDIT);
-			TCHAR buffer[4];
-			GetWindowText(freqEdit, buffer, 4);
-			int a4freq = atoi(buffer);
-			if (a4freq < 415 || a4freq > 445)
-				pTunerUI->mA4Freq = 440;
-			else
-				pTunerUI->mA4Freq = a4freq;
+			try {
+				HWND freqEdit = GetDlgItem(hDlg, IDC_FREQ_EDIT);
+				TCHAR buffer[4];
+				GetWindowText(freqEdit, buffer, 4);
+				int a4freq = atoi(buffer);
+				if (a4freq < 415 || a4freq > 445)
+					pTunerUI->mA4Freq = 440;
+				else
+					pTunerUI->mA4Freq = a4freq;
 
-			HWND micCombo = GetDlgItem(hDlg, IDC_MIC_COMBO);
-			int deviceIndex = SendMessage(micCombo, CB_GETCURSEL, 0, 0);
-			pTunerUI->mTuner.ChangeInputDevice(deviceIndex);
+				HWND micCombo = GetDlgItem(hDlg, IDC_MIC_COMBO);
+				int deviceIndex = SendMessage(micCombo, CB_GETCURSEL, 0, 0);
+				pTunerUI->mTuner.ChangeInputDevice(deviceIndex);
 
-			HWND sharpRadio = GetDlgItem(hDlg, IDC_SHARP_RADIO);
-			if (SendMessage(sharpRadio, BM_GETCHECK, 0, 0))
-				pTunerUI->mTableOffset = 0;
-			else
-				pTunerUI->mTableOffset = 12;
+				HWND sharpRadio = GetDlgItem(hDlg, IDC_SHARP_RADIO);
+				if (SendMessage(sharpRadio, BM_GETCHECK, 0, 0))
+					pTunerUI->mTableOffset = 0;
+				else
+					pTunerUI->mTableOffset = 12;
 
-			DestroyWindow(hDlg);
-			pTunerUI->mHDlgPreferences = NULL;
-			return TRUE;
+				DestroyWindow(hDlg);
+				pTunerUI->mHDlgPreferences = NULL;
+				return TRUE;
+			}
+			catch (std::invalid_argument ex) {
+				MessageBox(NULL, ex.what(), "Error", MB_OK | MB_ICONEXCLAMATION);
+			}
 		}
 		case IDC_PREF_RESET:
 		{

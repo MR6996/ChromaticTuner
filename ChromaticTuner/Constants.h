@@ -27,7 +27,6 @@
   * */
 #define FS					(44100) 
 #define DELTA_MILLS         (30)
-#define N_CHANNELS			(2)
 #define N_SAMPLES			(FS*DELTA_MILLS/1000*N_CHANNELS)
 #define N_FRAMES			(FS*DELTA_MILLS/1000)
 #define FRAMES_PER_BUFFER	(N_FRAMES)
