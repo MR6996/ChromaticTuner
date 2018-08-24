@@ -28,6 +28,7 @@ SoundAnalizer::SoundAnalizer(double* pBuffer, int wSize, int fs) :
 	);
 
 	//Allocate support memory
+	
 	m_pNSDF = new double[mWSize];
 	m_pPow = new double[mWSize];
 	m_pTmp = new double[mWSize];

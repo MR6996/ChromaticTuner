@@ -3,6 +3,7 @@
 
 #include "fftw/fftw3.h"
 #include <complex>
+#include <iostream>
 
 /**
  *	Provides an implementation of McLeod Pitch Method,

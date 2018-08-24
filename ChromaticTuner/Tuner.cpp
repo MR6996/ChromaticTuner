@@ -7,24 +7,22 @@ Tuner::Tuner(int fs, int nChannels, int framePerBuffer) :
 	mFramePerBuffer(framePerBuffer),
 	mMaxFreq(440.f) {
 
+	PaError err = paNoError;
+
 	//Initialize PortAudio data.
-	mErr = paNoError;
-	mErr = Pa_Initialize();
-	/**
-					Error handling
-	*/
+	err = Pa_Initialize();
+	if (err != paNoError) throw pa_error(Pa_GetErrorText(err));
 
 	mInputParameters.device = Pa_GetDefaultInputDevice();
-	/**
-					Error handling
-	*/
+	if(mInputParameters.device == paNoDevice) 
+		throw pa_error("No audio input device is available!");
 
 	mInputParameters.channelCount = mNChannels;
 	mInputParameters.sampleFormat = paFloat32;
 	mInputParameters.suggestedLatency = Pa_GetDeviceInfo(mInputParameters.device)->defaultLowInputLatency;
 	mInputParameters.hostApiSpecificStreamInfo = NULL;
 
-	mErr = Pa_OpenStream(
+	err = Pa_OpenStream(
 		&m_pStream,
 		&mInputParameters,
 		NULL,
@@ -34,9 +32,8 @@ Tuner::Tuner(int fs, int nChannels, int framePerBuffer) :
 		RecordCallback,
 		this
 	);
-	/**
-					Error handling
-	*/
+	if (err != paNoError) throw pa_error(Pa_GetErrorText(err));
+
 
 
 	// Allocate audio buffer and sound analizer.
@@ -61,35 +58,28 @@ Tuner::~Tuner() {
 
 
 void Tuner::StartTune() {
-	mErr = Pa_StartStream(m_pStream);
-	/**
-				Error handling
-	*/
+	PaError err = Pa_StartStream(m_pStream);
+	if (err != paNoError) throw pa_error(Pa_GetErrorText(err));
 }
 
 void Tuner::EndTune() {
-	mErr = Pa_StopStream(m_pStream);
-	/**
-	Error handling
-	*/
+	PaError err = Pa_StopStream(m_pStream);
+	if (err != paNoError) throw pa_error(Pa_GetErrorText(err));
 }
 
 void Tuner::ChangeInputDevice(PaDeviceIndex index) {
-	
-	mErr = Pa_StopStream(m_pStream);
-	/**
-	Error handling
-	*/
+	if(index < 0 || index > Pa_GetDeviceCount()-1)
+		throw pa_error("Invalid audio input device index.");
+
+	PaError err = Pa_StopStream(m_pStream);
+	if (err != paNoError) throw pa_error(Pa_GetErrorText(err));
 
 	mInputParameters.device = index;
-	/**
-	Error handling
-	*/
 
 	mInputParameters.channelCount = mNChannels;
 	mInputParameters.suggestedLatency = Pa_GetDeviceInfo(mInputParameters.device)->defaultLowInputLatency;
 
-	mErr = Pa_OpenStream(
+	PaError err = Pa_OpenStream(
 		&m_pStream,
 		&mInputParameters,
 		NULL,
@@ -100,10 +90,8 @@ void Tuner::ChangeInputDevice(PaDeviceIndex index) {
 		this
 	);
 
-	mErr = Pa_StartStream(m_pStream);
-	/**
-	Error handling
-	*/
+	PaError err = Pa_StartStream(m_pStream);
+	if (err != paNoError) throw pa_error(Pa_GetErrorText(err));
 }
 
 PaDeviceIndex Tuner::GetDeviceIndex() {
