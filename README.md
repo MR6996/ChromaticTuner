@@ -25,7 +25,7 @@ The application provides a dialog box for set the user preferences, such as:
 ## Built With 
 The following libraries are used for the development of the application:
 
-* [Portaudio](www.portaudio.com) a free, cross-platform, open-source, audio I/O library;
+* [Portaudio](http://www.portaudio.com) a free, cross-platform, open-source, audio I/O library;
 * [FFTW3](http://www.fftw.org/) a C subroutine library for computing the discrete Fourier transform.
 
 ### Authors
