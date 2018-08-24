@@ -48,6 +48,7 @@ TunerUI::~TunerUI() {
 }
 
 
+
 HRESULT TunerUI::Initialize() {
 	HRESULT hResult = S_OK;
 
