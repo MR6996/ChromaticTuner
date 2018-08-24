@@ -20,7 +20,7 @@ The application provides a dialog box for set the user preferences, such as:
 
 ## Getting Started
 
-A compiled version of the software can be installed downloading downloading the executable of [setup](setup.exe).
+A compiled version of the software can be installed downloading downloading the [setup](setup.exe) executable.
 
 ## Deployment
 
