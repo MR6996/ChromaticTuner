@@ -1,16 +1,32 @@
-<img align="center" src="_media/chtuner_logo.png">
+![Logo](_media/chtuner_logo.png)</br></br></br>
 
-An application for detects and displays the pitch of musical notes played on a musical instrument.
+<img align="left" width="60%" src="_media/screen_01.png"/>
+<img align="right" width="40%" src="_media/screen_02.png"/>
 
-<img align="left" src="_media/screen_01.png">
-<img align="left" src="_media/screen_02.png">
+The aim of the project is the production of an application that a musician can use for tune his instruments. 
 
+This application use a Pitch Detection Algorithm (MPM algorithm [See references](#references)), for identify the pitch of a sound recorded by the microphone. This implementation runs in real-time recording audio signal for a small delta of time and applaying the algorithm.
+
+The User-Interface show to the user the nearest note calculated starting from the pitch identified.
+
+</br></br></br>
+
+The application provides a dialog box for set the user preferences, such as:
+   * the frequency of A4;
+   * the input device;
+   * the notation tu use for display the note.
+   
+</br></br>
 
 ## Getting Started
 
 ## Deployment
 
-## Built With
+## Built With 
+The following libraries are used for the development of the application:
+
+* [Portaudio](http://www.portaudio.com) a free, cross-platform, open-source, audio I/O library;
+* [FFTW3](http://www.fftw.org/) a C subroutine library for computing the discrete Fourier transform.
 
 ### Authors
 
