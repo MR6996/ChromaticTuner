@@ -41,4 +41,4 @@ This project is licensed under the GNU GPL License - see the [LICENSE](LICENSE) 
 ## References
 [1] **P. McLeod and G. Wyvill. A smarter way to find pitch.** In Proceedings of the International Computer Music Conference (ICMC’05), 2005.
 
-Copyright © 2018-2019 Mario Randazzo
+Copyright © 2018-2022 Mario Randazzo
